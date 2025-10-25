@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Hệ thống Quản lý Lớp học Thông minh
 
-## Getting Started
+Đây là dự án **Next.js** được khởi tạo bằng [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-First, run the development server:
+## Bắt đầu
+
+### 1. Clone dự án
 
 ```bash
+git clone <URL_REPO_CỦA_BẠN>
+cd <THƯ_MỤC_DỰ_ÁN>
+```
+
+### 2. Cài đặt các package
+
+Bạn có thể dùng `npm`, `yarn`, `pnpm` hoặc `bun` tùy môi trường:
+
+```bash
+# npm
+npm install
+
+# yarn
+yarn install
+
+# pnpm
+pnpm install
+
+# bun
+bun install
+```
+
+### 3. Chạy server phát triển
+
+```bash
+# npm
 npm run dev
-# or
+
+# yarn
 yarn dev
-# or
+
+# pnpm
 pnpm dev
-# or
+
+# bun
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Sau đó mở trình duyệt tại: [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+### Chú ý:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Vào Google Cloud -> APIs & Services -> Credentials, tìm Service Account tên smart-classroom-nhap-sheet-sa để tải key về thư mục gốc của dự án (Đặt file ngang hàng với các thư mục như src, docs,...).
 
-## Learn More
+- Sheet lưu dữ liệu là [Smart-Classroom-DB](https://docs.google.com/spreadsheets/d/1KjE863_CWLiiK68eubjVcJrQK37GYSDYKLYNjwiowbs/edit?usp=sharing).
 
-To learn more about Next.js, take a look at the following resources:
+### 4. Sửa đổi dự án
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Các file chính: `app/page.js` (trang chủ), `app/teacher`, `app/students`.
+- Khi chỉnh sửa, Next.js sẽ tự động reload trang.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Cấu trúc chính của dự án
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `app/` – chứa các route và page theo **App Router** của Next.js.
+- `components/` – chứa các component dùng chung, ví dụ `RoleGuard`, `Header`.
+- `lib/` – chứa helper, ví dụ `sheets.js` để kết nối Google Sheets.
+- `app/api/` – chứa các route API.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## Các tính năng nổi bật
+
+- Quản lý giảng viên và sinh viên.
+- Danh sách lớp, lịch giảng dạy.
+- Bài tập, bài kiểm tra, bảng điểm.
+- Biểu đồ tổng hợp kết quả học tập.
+- Hỗ trợ phân quyền giữa giáo viên và sinh viên.
+
+---
+
+## Tài nguyên hữu ích
+
+- [Next.js Documentation](https://nextjs.org/docs) – Tài liệu chính thức của Next.js.
+- [Learn Next.js](https://nextjs.org/learn) – Tutorial tương tác để học Next.js.
+- [Next.js GitHub](https://github.com/vercel/next.js) – Repository chính thức, góp ý và tham khảo mã nguồn.
+
+---
+
+## Triển khai
+
+- Dự án có thể deploy dễ dàng trên **Vercel**.
+- Hướng dẫn chi tiết: [Next.js Deployment Documentation](https://nextjs.org/docs/app/building-your-application/deploying)
