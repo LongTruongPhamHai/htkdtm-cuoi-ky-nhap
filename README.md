@@ -7,8 +7,8 @@
 ### 1. Clone dự án
 
 ```bash
-git clone <URL_REPO_CỦA_BẠN>
-cd <THƯ_MỤC_DỰ_ÁN>
+git clone https://github.com/LongTruongPhamHai/htkdtm-cuoi-ky-nhap
+cd smart-classroom-nhap
 ```
 
 ### 2. Cài đặt các package
