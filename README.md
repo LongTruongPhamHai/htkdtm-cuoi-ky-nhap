@@ -51,6 +51,8 @@ Sau đó mở trình duyệt tại: [http://localhost:3000](http://localhost:300
 
 - Vào Google Cloud -> APIs & Services -> Credentials, tìm Service Account tên smart-classroom-nhap-sheet-sa để tải key về thư mục gốc của dự án (Đặt file ngang hàng với các thư mục như src, docs,...).
 
+- Tạo file .env giống với file .env.example và sửa nội dung
+
 - Sheet lưu dữ liệu là [Smart-Classroom-DB](https://docs.google.com/spreadsheets/d/1KjE863_CWLiiK68eubjVcJrQK37GYSDYKLYNjwiowbs/edit?usp=sharing).
 
 ### 4. Sửa đổi dự án

@@ -1,36 +1,24 @@
 import { google } from "googleapis";
-import path from "path";
-import { readFileSync } from "fs";
 
-// Đường dẫn tới file JSON key bạn đã tải
-const KEYFILE_PATH = path.join(
-  process.cwd(),
-  "smart-classroom-nhap-sheet-sa.json"
+// ✅ Lấy key service account từ biến môi trường
+const serviceAccount = JSON.parse(
+  process.env.GOOGLE_SERVICE_ACCOUNT
 );
 
-// ID của Google Sheet
+// ✅ ID của Google Sheet
 const SHEET_ID =
   "1KjE863_CWLiiK68eubjVcJrQK37GYSDYKLYNjwiowbs";
 
-// Đọc key
-const credentials = JSON.parse(
-  readFileSync(KEYFILE_PATH, "utf8")
-);
-
-// Tạo client xác thực
+// ✅ Tạo client xác thực
 const auth = new google.auth.GoogleAuth({
-  credentials,
+  credentials: serviceAccount,
   scopes: ["https://www.googleapis.com/auth/spreadsheets"],
 });
 
-// Khởi tạo instance
+// ✅ Khởi tạo Google Sheets API instance
 export async function getSheet() {
   const client = await auth.getClient();
-  const sheets = google.sheets({
-    version: "v4",
-    auth: client,
-  });
-  return sheets;
+  return google.sheets({ version: "v4", auth: client });
 }
 
 export { SHEET_ID };
