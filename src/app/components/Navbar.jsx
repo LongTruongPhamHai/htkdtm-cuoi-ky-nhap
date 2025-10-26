@@ -1,103 +1,112 @@
 "use client";
-import { useRouter, usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { X } from "lucide-react";
 
-export default function Navbar({ isOpen, onClose }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const [role, setRole] = useState(null);
+export default function Navbar({ role, isOpen, onClose }) {
+  const baseMenu = [
+    { label: "Trang chủ", href: "/" },
+    { label: "Tin tức", href: "/news" },
+  ];
 
-  useEffect(() => {
-    const savedRole = localStorage.getItem("role");
-    setRole(savedRole);
+  const userMenu = [
+    { label: "Dashboard", href: "/dashboard" },
+  ];
 
-    // 🔔 Lắng nghe thay đổi role trong localStorage (kể cả tab hiện tại)
-    const handleRoleChange = () => {
-      const updatedRole = localStorage.getItem("role");
-      setRole(updatedRole);
-    };
-
-    // Khi role thay đổi ở đâu đó (ví dụ: sau khi login)
-    window.addEventListener("roleChange", handleRoleChange);
-    window.addEventListener("storage", handleRoleChange); // cho cả tab khác
-
-    return () => {
-      window.removeEventListener(
-        "roleChange",
-        handleRoleChange
-      );
-      window.removeEventListener(
-        "storage",
-        handleRoleChange
-      );
-    };
-  }, []);
-
-  if (!role) return null; // không hiển thị nếu chưa đăng nhập
-
-  const menuItems =
+  const roleMenu =
     role === "teacher"
       ? [
-          { name: "Trang chủ", path: "/teacher/home" },
           {
-            name: "Danh sách lớp",
-            path: "/teacher/students",
+            label: "Danh sách lớp quản lý",
+            href: "/teacher/classes",
           },
-          {
-            name: "Điểm danh",
-            path: "/teacher/attendance",
-          },
-          { name: "Biểu đồ", path: "/teacher/chart" },
         ]
-      : [
-          { name: "Trang chủ", path: "/students/home" },
-          { name: "Lịch học", path: "/students/schedule" },
-          { name: "Nộp bài", path: "/students/homework" },
-          { name: "Xem điểm", path: "/students/scores" },
-        ];
+      : role === "student"
+      ? [{ label: "Lớp học", href: "/student/classes" }]
+      : [];
+
+  const menu = role
+    ? [...baseMenu, ...userMenu, ...roleMenu]
+    : baseMenu;
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.aside
-          initial={{ x: -250, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: -250, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="fixed top-0 left-0 h-full w-56 bg-gray-50 border-r shadow-md p-4 z-999"
-        >
-          <div className="flex justify-between items-center mb-4">
-            <h2 className="font-semibold text-lg text-gray-800">
-              Menu
-            </h2>
-            <button
-              onClick={onClose}
-              className="text-gray-500 hover:text-red-500 text-xl"
-            >
-              ✕
-            </button>
-          </div>
+        <>
+          {/* Overlay */}
+          <motion.div
+            className="fixed inset-0 z-10"
+            style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
+            onClick={onClose}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          />
 
-          <nav className="flex flex-col gap-2">
-            {menuItems.map((item) => (
+          {/* Sidebar */}
+          <motion.nav
+            initial={{ x: -300 }}
+            animate={{ x: 0 }}
+            exit={{ x: -300 }}
+            transition={{
+              type: "spring",
+              stiffness: 220,
+              damping: 25,
+            }}
+            className="fixed top-0 left-0 h-full w-64 shadow-lg z-[99] flex flex-col"
+            style={{
+              backgroundColor: "var(--edu-surface)",
+            }}
+          >
+            {/* Header Sidebar */}
+            <div
+              className="flex justify-between items-center h-[70px] p-4 border-b"
+              style={{
+                backgroundColor: "var(--edu-primary)",
+                color: "white",
+              }}
+            >
+              <h2 className="text-lg font-semibold">
+                {role
+                  ? role === "teacher"
+                    ? "Giảng viên"
+                    : "Sinh viên"
+                  : "Khách"}
+              </h2>
               <button
-                key={item.path}
-                onClick={() => {
-                  router.push(item.path);
-                  onClose();
-                }}
-                className={`text-left px-3 py-2 rounded-lg hover:bg-blue-100 ${
-                  pathname === item.path
-                    ? "bg-blue-200 font-semibold"
-                    : ""
-                }`}
+                onClick={onClose}
+                className="p-1 rounded-lg hover:bg-gray-100"
               >
-                {item.name}
+                <X size={20} />
               </button>
-            ))}
-          </nav>
-        </motion.aside>
+            </div>
+
+            {/* Menu */}
+            <ul className="p-4 space-y-2">
+              {menu.map((item) => (
+                <li key={item.href}>
+                  <a
+                    href={item.href}
+                    onClick={onClose}
+                    className="block px-4 py-2 rounded-lg font-medium transition"
+                    style={{
+                      color: "var(--edu-text)",
+                    }}
+                    onMouseEnter={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        "var(--edu-bg-light)")
+                    }
+                    onMouseLeave={(e) =>
+                      (e.currentTarget.style.backgroundColor =
+                        "transparent")
+                    }
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </motion.nav>
+        </>
       )}
     </AnimatePresence>
   );

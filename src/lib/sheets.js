@@ -1,24 +1,36 @@
 import { google } from "googleapis";
 
-// ✅ Lấy key service account từ biến môi trường
-const serviceAccount = JSON.parse(
-  process.env.GOOGLE_SERVICE_ACCOUNT
-);
+// 🔹 Lấy ID từ biến môi trường
+export const SHEET_ID = process.env.GOOGLE_SHEET_ID;
 
-// ✅ ID của Google Sheet
-const SHEET_ID =
-  "1KjE863_CWLiiK68eubjVcJrQK37GYSDYKLYNjwiowbs";
+let cachedSheets = null;
 
-// ✅ Tạo client xác thực
-const auth = new google.auth.GoogleAuth({
-  credentials: serviceAccount,
-  scopes: ["https://www.googleapis.com/auth/spreadsheets"],
-});
+/**
+ * Hàm khởi tạo Google Sheets client, có cache để không tạo lại mỗi request.
+ */
+export async function getGoogleSheet() {
+  if (cachedSheets) return cachedSheets;
 
-// ✅ Khởi tạo Google Sheets API instance
-export async function getSheet() {
-  const client = await auth.getClient();
-  return google.sheets({ version: "v4", auth: client });
+  try {
+    // Parse thông tin service account (đã stringify trong .env)
+    const credentials = JSON.parse(
+      process.env.GOOGLE_SERVICE_ACCOUNT
+    );
+
+    const auth = new google.auth.GoogleAuth({
+      credentials,
+      scopes: [
+        "https://www.googleapis.com/auth/spreadsheets",
+      ],
+    });
+
+    const sheets = google.sheets({ version: "v4", auth });
+    cachedSheets = sheets;
+    return sheets;
+  } catch (error) {
+    console.error("❌ Lỗi khởi tạo Google Sheets:", error);
+    throw new Error(
+      "Không thể kết nối tới Google Sheets API"
+    );
+  }
 }
-
-export { SHEET_ID };

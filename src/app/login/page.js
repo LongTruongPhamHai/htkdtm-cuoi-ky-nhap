@@ -1,119 +1,135 @@
-// "use client";
-// import { useEffect } from "react";
-// import { useRouter } from "next/navigation";
-
-// export default function LoginRedirect() {
-//   const router = useRouter();
-
-//   useEffect(() => {
-//     const role = localStorage.getItem("role");
-
-//     if (!role) {
-//       router.replace("/");
-//       return;
-//     }
-
-//     if (role === "teacher") {
-//       router.replace("/teacher");
-//     } else if (role === "student") {
-//       router.replace("/students");
-//     } else {
-//       localStorage.removeItem("role");
-//       router.replace("/");
-//     }
-//   }, [router]);
-
-//   return (
-//     <div className="w-full min-h-screen flex items-center justify-center">
-//       <p className="text-gray-700 text-lg">
-//         Đang chuyển trang...
-//       </p>
-//     </div>
-//   );
-// }
-
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 
-export default function TeacherLogin() {
+export default function LoginPage() {
   const router = useRouter();
+  const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (e) => {
+  // 🔹 Lấy role từ localStorage
+  useEffect(() => {
+    const storedRole = localStorage.getItem("role");
+    if (!storedRole) router.replace("/");
+    else setRole(storedRole);
+  }, [router]);
+
+  async function handleLogin(e) {
     e.preventDefault();
-    setError("");
     setLoading(true);
+    setError("");
 
     try {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          role: "teacher", // 👈 Thêm role để API biết là đăng nhập giáo viên
-          username,
-          password,
-        }),
+        body: JSON.stringify({ role, username, password }),
       });
 
       const data = await res.json();
       if (!res.ok)
         throw new Error(data.error || "Đăng nhập thất bại");
 
+      // ✅ Lưu thông tin
       localStorage.setItem("id", data.id);
       localStorage.setItem("name", data.name);
-      localStorage.setItem("role", "teacher");
+      localStorage.setItem("role", data.role);
       window.dispatchEvent(new Event("roleChanged"));
 
-      router.push("/teacher/home"); // ✅ Chuyển đến trang chính sau khi login
+      router.push("/");
+      // ✅ Chuyển hướng đúng dashboard
+      // if (role === "teacher") router.push("/teacher");
+      // else router.push("/students");
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
-  };
+  }
+
+  if (!role)
+    return <p className="text-center mt-20">Đang tải...</p>;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-green-50 to-white">
-      <form
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: `linear-gradient(135deg, var(--edu-bg), var(--edu-surface))`,
+      }}
+    >
+      <motion.form
         onSubmit={handleLogin}
-        className="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md border border-green-100"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="shadow-xl rounded-2xl p-8 w-full max-w-md border"
+        style={{
+          backgroundColor: "var(--edu-surface)",
+          borderColor: "var(--edu-border)",
+          color: "var(--edu-text)",
+        }}
       >
-        <h1 className="text-3xl font-bold text-green-700 text-center mb-6">
-          👩‍🏫 Đăng nhập Giảng viên
+        <h1
+          className="text-3xl font-bold text-center mb-6"
+          style={{
+            color:
+              role === "teacher"
+                ? "var(--edu-teacher)"
+                : "var(--edu-student)",
+          }}
+        >
+          {role === "teacher"
+            ? "👩‍🏫 Đăng nhập Giảng viên"
+            : "🎓 Đăng nhập Sinh viên"}
         </h1>
 
         <div className="mb-4">
-          <label className="block mb-1 font-semibold text-gray-700">
+          <label className="block font-semibold mb-1">
             Tên đăng nhập
           </label>
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+            className="w-full rounded-lg p-3 outline-none transition"
+            style={{
+              border: `1px solid var(--edu-border)`,
+              backgroundColor: "var(--edu-bg)",
+              color: "var(--edu-text)",
+              boxShadow: "inset 0 1px 2px rgba(0,0,0,0.05)",
+            }}
             required
           />
         </div>
 
         <div className="mb-6">
-          <label className="block mb-1 font-semibold text-gray-700">
+          <label className="block font-semibold mb-1">
             Mật khẩu
           </label>
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400"
+            className="w-full rounded-lg p-3 outline-none transition"
+            style={{
+              border: `1px solid var(--edu-border)`,
+              backgroundColor: "var(--edu-bg)",
+              color: "var(--edu-text)",
+              boxShadow: "inset 0 1px 2px rgba(0,0,0,0.05)",
+            }}
             required
           />
         </div>
 
         {error && (
-          <p className="text-red-500 text-sm text-center mb-4">
+          <p
+            className="text-center mb-4"
+            style={{ color: "crimson" }}
+          >
             {error}
           </p>
         )}
@@ -121,20 +137,30 @@ export default function TeacherLogin() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition"
+          className="w-full py-2 rounded-lg font-semibold transition"
+          style={{
+            backgroundColor: "var(--edu-primary)",
+            color: "white",
+            opacity: loading ? 0.7 : 1,
+          }}
         >
           {loading ? "Đang đăng nhập..." : "Đăng nhập"}
         </button>
 
         <button
           type="button"
-          disabled={loading}
-          className="w-full py-2 bg-gray-400 text-white font-semibold rounded-lg hover:bg-gray-500 transition mt-2"
-          onClick={() => router.push("/")}
+          onClick={() => {
+            localStorage.removeItem("role");
+            router.push("/");
+          }}
+          className="w-full mt-3 py-2 rounded-lg font-semibold bg-gray-400 hover:bg-gray-500 transition"
+          style={{
+            color: "white",
+          }}
         >
           Quay lại
         </button>
-      </form>
+      </motion.form>
     </div>
   );
 }

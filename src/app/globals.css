@@ -1,16 +1,35 @@
 @import "tailwindcss";
 
+/* ==========================
+   🎓 Academic Blue Palette
+   — Bộ màu xanh học thuật
+========================== */
+:root {
+  /* 💙 Màu chính (dùng cho header, nút, tiêu đề) */
+  --edu-primary: oklch(0.68 0.14 230);
+
+  /* 💧 Màu phụ (hover, nhấn nhẹ, điểm nhấn) */
+  --edu-accent: oklch(0.78 0.1 230);
+
+  /* 🩵 Nền tổng thể */
+  --edu-bg: oklch(0.98 0.02 230);
+
+  /* 🪶 Nền bề mặt (card, section) */
+  --edu-surface: oklch(0.99 0.015 230);
+
+  /* ✏️ Màu chữ chính */
+  --edu-text: oklch(0.22 0.05 230);
+
+  /* ⚪ Màu viền nhẹ */
+  --edu-border: oklch(0.9 0.04 230);
+
+  /* 👩‍🏫 Màu cho Giảng viên */
+  --edu-teacher: oklch(0.62 0.12 230);
+
+  /* 🎓 Màu cho Sinh viên */
+  --edu-student: oklch(0.7 0.16 220);
+}
+
 * {
   /* border: 1px solid red; */
-}
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
 }

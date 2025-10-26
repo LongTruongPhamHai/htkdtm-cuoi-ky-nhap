@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import RoleGuard from "../../../components/RoleGuard";
 import { motion } from "framer-motion";
 import {
-  Users,
   Users2,
   Calendar,
   FileText,
@@ -21,10 +20,10 @@ export default function ClassDetailPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const teacherId = localStorage.getItem("id");
-    if (!teacherId) return setLoading(false);
+    const studentId = localStorage.getItem("id");
+    if (!studentId) return setLoading(false);
 
-    fetch(`/api/teacher-classes?teacherId=${teacherId}`)
+    fetch(`/api/student-classes?studentId=${studentId}`)
       .then((res) => res.json())
       .then((data) => setClasses(data.data || []))
       .finally(() => setLoading(false));
@@ -38,13 +37,8 @@ export default function ClassDetailPage() {
 
   // Danh sách button với icon
   const menuButtons = [
-    {
-      label: "Danh sách sinh viên",
-      path: "students",
-      icon: Users,
-    },
-    { label: "Nhóm học tập", path: "groups", icon: Users2 },
     { label: "Lịch học", path: "schedule", icon: Calendar },
+    { label: "Nhóm học tập", path: "groups", icon: Users2 },
     {
       label: "Bài tập",
       path: "assignments",
@@ -59,7 +53,7 @@ export default function ClassDetailPage() {
   ];
 
   return (
-    <RoleGuard role="teacher">
+    <RoleGuard role="student">
       <div className="h-fit p-10 bg-[var(--edu-bg)] text-[var(--edu-text)]">
         {/* ===================== HERO SECTION ===================== */}
         <div className="text-center mb-12">
@@ -89,10 +83,12 @@ export default function ClassDetailPage() {
                   whileTap={{ scale: 0.96 }}
                   onClick={() =>
                     router.push(
-                      `/teacher/classes/${id}/${path}`
+                      `/student/classes/${id}/${path}`
                     )
                   }
-                  className="flex items-center justify-center gap-3 p-4 rounded-xl bg-[var(--edu-primary)] text-white font-medium shadow-md transition-colors"
+                  className={`flex items-center justify-center gap-3 p-4 rounded-xl bg-[var(--edu-primary)] text-white font-medium shadow-md transition-colors ${
+                    label === "Lịch học" && "col-span-2"
+                  }`}
                 >
                   <Icon size={20} />
                   {label}
