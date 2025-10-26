@@ -84,7 +84,7 @@ export default function StudentClassesPage() {
             className="text-center mt-16 text-lg"
             style={{ opacity: 0.7 }}
           >
-            ⛔ Bạn chưa được phân công lớp nào.
+            ⛔ Không có lớp nào.
           </p>
         )}
       </div>
