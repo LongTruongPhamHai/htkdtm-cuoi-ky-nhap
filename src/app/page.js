@@ -33,7 +33,10 @@ export default function LandingPage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => router.push("/teacher/")}
+            onClick={() => {
+              router.push("/login");
+              localStorage.setItem("role", "teacher");
+            }}
             className="px-8 py-3 bg-green-600 text-white rounded-full text-lg font-semibold shadow-md hover:bg-green-700 transition"
           >
             👨‍🏫 Giảng viên
@@ -42,7 +45,10 @@ export default function LandingPage() {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={() => router.push("/students/")}
+            onClick={() => {
+              router.push("/login");
+              localStorage.setItem("role", "student");
+            }}
             className="px-8 py-3 bg-blue-600 text-white rounded-full text-lg font-semibold shadow-md hover:bg-blue-700 transition"
           >
             🎒 Sinh viên
