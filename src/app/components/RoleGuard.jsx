@@ -1,32 +1,39 @@
-"use client";
-import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function RoleGuard({ children, role }) {
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => setMounted(true), []);
+
   useEffect(() => {
-    // 🧠 Lấy thông tin role và name đã lưu sau khi đăng nhập
+    if (!mounted) return; // chỉ chạy khi đã mount client
+
     const currentRole = localStorage.getItem("role");
     const name = localStorage.getItem("name");
-    // Nếu chưa đăng nhập hoặc sai vai trò → chuyển hướng đúng trang login
+
     if (!currentRole || currentRole !== role || !name) {
-      if (role === "teacher") {
-        router.push("/teacher");
-      } else if (role === "student") {
-        router.push("/students/login");
-      }
+      router.push(
+        role === "teacher"
+          ? "/teacher/login"
+          : "/students/login"
+      );
       return;
     }
-    // Nếu người dùng cố vào nhầm trang login dù đã đăng nhập thì điều hướng lại
-    if (role === "teacher" && pathname === "/teacher") {
+
+    if (
+      role === "teacher" &&
+      pathname === "/teacher/login"
+    ) {
       router.push("/teacher/home");
     } else if (
       role === "student" &&
       pathname === "/students/login"
     ) {
-      router.push("/");
+      router.push("/students/home");
     }
-  }, [router, pathname, role]);
+  }, [mounted, router, pathname, role]);
+
   return <>{children}</>;
 }
